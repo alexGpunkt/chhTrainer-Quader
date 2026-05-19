@@ -20,7 +20,7 @@
 // ▸ HIER ANPASSEN
 // ════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL  = 'https://sntbedutlztfsyzlxqfl.supabase.co/rest/v1/';  	// ← anpassen
+const SUPABASE_URL  = 'https://sntbedutlztfsyzlxqfl.supabase.co';  	// ← anpassen
 const SUPABASE_KEY  = 'sb_publishable_nWFLSFS56Pg6QLeCz1IC1Q_3P7KqD80';         // ← anpassen
 const APP_NAME      = 'Trainer Quader & Würfel';                      		// ← App-Name
 
