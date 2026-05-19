@@ -120,5 +120,6 @@ function updateStats(){let k=0,u=0;deck.forEach(x=>{let s=status[x.type.id];if(s
 function buildFilters(){let f=document.getElementById('filters'); CATS.forEach(cat=>{let b=document.createElement('button');b.className='f-btn on';b.textContent=cat;b.onclick=()=>{if(activeCats.has(cat)&&activeCats.size>1)activeCats.delete(cat);else activeCats.add(cat);b.classList.toggle('on',activeCats.has(cat));buildDeck();};f.appendChild(b);});}
 buildFilters(); buildDeck(); shuffleDeck();
 </script>
+<script src="tracker.js"></script>
 </body>
 </html>
