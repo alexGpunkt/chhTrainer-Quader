@@ -25,7 +25,7 @@ const SUPABASE_KEY  = 'sb_publishable_nWFLSFS56Pg6QLeCz1IC1Q_3P7KqD80';         
 const APP_NAME      = 'Trainer Quader & Würfel';                      		// ← App-Name
 
 // Optional: true = Schüler gibt beim Start seinen Namen ein
-const STUDENT_NAME_PROMPT = false;
+const STUDENT_NAME_PROMPT = true;
 
 // Ping-Intervall in Millisekunden (Standard: 30 Sekunden)
 const PING_INTERVAL_MS = 30000;
