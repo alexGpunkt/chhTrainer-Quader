@@ -1,125 +1,1101 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mathe 8 – Quader, Würfel und zusammengesetzte Körper</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#f4f7fb;--card:#ffffff;--card2:#f8fbff;--ink:#172033;--muted:#64748b;--border:#d7dfec;
-      --blue:#2563eb;--green:#16845f;--red:#c2410c;--violet:#7c3aed;--gold:#b7791f;
-      --shadow:0 18px 45px rgba(15,23,42,.12);
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0
     }
-    html,body{min-height:100%}
-    body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef5ff,#f7fafc);color:var(--ink);padding:16px}
-    .app{width:100%;max-width:980px;margin:0 auto;padding:18px}
-    .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-    h1{font-size:clamp(22px,4vw,34px);line-height:1.15;color:#0f172a;margin-bottom:6px}
-    .subtitle{font-size:15px;line-height:1.45;color:var(--muted)}
-    .badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:8px 13px;color:var(--muted);font-size:14px;box-shadow:0 4px 14px rgba(15,23,42,.06)}
-    .filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 16px}
-    .f-btn{font-size:14px;padding:8px 13px;border-radius:999px;border:1px solid var(--border);background:#fff;color:#334155;cursor:pointer;transition:.15s}
-    .f-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
-    .f-btn:nth-child(2).on{background:var(--green);border-color:var(--green)}
-    .f-btn:nth-child(3).on{background:var(--violet);border-color:var(--violet)}
-    .f-btn:nth-child(4).on{background:var(--gold);border-color:var(--gold)}
-    .stats-row{display:flex;align-items:center;gap:13px;margin:0 0 16px;flex-wrap:wrap}
-    .stat{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:6px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-    .prog-wrap{flex:1;min-width:150px;height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}.prog-bar{height:100%;width:0%;background:var(--green);border-radius:999px;transition:width .35s}.pct{font-size:13px;color:var(--muted);min-width:42px;text-align:right}
-    .card-stage{display:flex;justify-content:center;margin:8px 0 14px}.card-wrap{width:100%;max-width:760px;min-height:390px;perspective:1400px;cursor:pointer}.card-inner{width:100%;min-height:390px;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.2,.2,1)}.card-inner.flipped{transform:rotateY(180deg)}
-    .face{position:absolute;inset:0;min-height:390px;border-radius:24px;border:1px solid var(--border);box-shadow:var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(1px);padding:26px;display:flex;flex-direction:column;background:linear-gradient(180deg,#fff,#f8fbff);overflow:hidden}.face-back{transform:rotateY(180deg) translateZ(1px);background:linear-gradient(180deg,#ffffff,#f2fff9)}
-    .label{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:12px;color:var(--blue)}.face-back .label{color:var(--green)}
-    .pill{align-self:flex-start;border-radius:999px;padding:5px 12px;background:#dbeafe;color:#1e40af;font-size:13px;font-weight:700;margin-bottom:12px}.pill.o{background:#dcfce7;color:#166534}.pill.z{background:#f3e8ff;color:#6b21a8}.pill.s{background:#fef3c7;color:#92400e}
-    .qtype{font-size:14px;color:var(--muted);margin-bottom:10px}.question{font-size:clamp(19px,2.8vw,26px);line-height:1.45;font-weight:700;flex:0}.given{margin-top:18px;padding:15px 16px;background:#eef2ff;border:1px solid #dbe3ff;border-radius:14px;font-size:17px;line-height:1.8;color:#1e293b}.given span{color:#1d4ed8;font-weight:700}.cue{margin-top:auto;padding-top:18px;font-size:14px;color:var(--muted)}
-    .sol-body{flex:1;overflow:auto;padding-right:4px}.sol-step{background:#fff;border:1px solid #dbe5ef;border-left:5px solid #cbd5e1;border-radius:12px;padding:12px 14px;margin-bottom:11px}.sol-step.result{border-left-color:var(--green);background:#ecfdf5}.sol-l{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}.formula{font-family:Consolas,'Courier New',monospace;font-size:16px;line-height:1.6;color:#111827}.result .formula{font-size:18px;font-weight:800;color:#166534}.note{font-size:13px;color:var(--muted);line-height:1.45;margin-top:4px}
-    .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.a-btn{border:1px solid var(--border);background:#fff;color:#1f2937;border-radius:12px;padding:10px 15px;font-size:14px;cursor:pointer}.a-btn:hover{background:#f1f5f9}.a-btn.no{border-color:#fed7aa;color:#c2410c}.a-btn.yes{border-color:#bbf7d0;color:#166534}.a-btn.primary{background:#2563eb;color:#fff;border-color:#2563eb}.a-btn:disabled{opacity:.45;cursor:default}
-    .nav-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}.counter{font-size:14px;color:var(--muted);min-width:64px;text-align:center}.info{max-width:760px;margin:14px auto 0;color:var(--muted);font-size:13px;line-height:1.45;text-align:center}.kbd{font-family:Consolas,monospace;background:#e2e8f0;border-radius:5px;padding:1px 5px;color:#334155}
-    @media(max-width:620px){body{padding:8px}.app{padding:8px}.face{padding:20px}.card-wrap,.card-inner,.face{min-height:440px}.given{font-size:15px}.formula{font-size:14px}.actions .a-btn{width:100%;max-width:320px}}
+
+    :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --card2: #f8fbff;
+        --ink: #172033;
+        --muted: #64748b;
+        --border: #d7dfec;
+        --blue: #2563eb;
+        --green: #16845f;
+        --red: #c2410c;
+        --violet: #7c3aed;
+        --gold: #b7791f;
+        --shadow: 0 18px 45px rgba(15, 23, 42, .12);
+    }
+
+    html,
+    body {
+        min-height: 100%
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, #eef5ff, #f7fafc);
+        color: var(--ink);
+        padding: 16px
+    }
+
+    .app {
+        width: 100%;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 18px
+    }
+
+    .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px
+    }
+
+    h1 {
+        font-size: clamp(22px, 4vw, 34px);
+        line-height: 1.15;
+        color: #0f172a;
+        margin-bottom: 6px
+    }
+
+    .subtitle {
+        font-size: 15px;
+        line-height: 1.45;
+        color: var(--muted)
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 8px 13px;
+        color: var(--muted);
+        font-size: 14px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, .06)
+    }
+
+    .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 14px 0 16px
+    }
+
+    .f-btn {
+        font-size: 14px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: #334155;
+        cursor: pointer;
+        transition: .15s
+    }
+
+    .f-btn.on {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff
+    }
+
+    .f-btn:nth-child(2).on {
+        background: var(--green);
+        border-color: var(--green)
+    }
+
+    .f-btn:nth-child(3).on {
+        background: var(--violet);
+        border-color: var(--violet)
+    }
+
+    .f-btn:nth-child(4).on {
+        background: var(--gold);
+        border-color: var(--gold)
+    }
+
+    .stats-row {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin: 0 0 16px;
+        flex-wrap: wrap
+    }
+
+    .stat {
+        font-size: 14px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px
+    }
+
+    .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block
+    }
+
+    .prog-wrap {
+        flex: 1;
+        min-width: 150px;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        overflow: hidden
+    }
+
+    .prog-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--green);
+        border-radius: 999px;
+        transition: width .35s
+    }
+
+    .pct {
+        font-size: 13px;
+        color: var(--muted);
+        min-width: 42px;
+        text-align: right
+    }
+
+    .card-stage {
+        display: flex;
+        justify-content: center;
+        margin: 8px 0 14px
+    }
+
+    .card-wrap {
+        width: 100%;
+        max-width: 760px;
+        min-height: 390px;
+        perspective: 1400px;
+        cursor: pointer
+    }
+
+    .card-inner {
+        width: 100%;
+        min-height: 390px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform .55s cubic-bezier(.4, .2, .2, 1)
+    }
+
+    .card-inner.flipped {
+        transform: rotateY(180deg)
+    }
+
+    .face {
+        position: absolute;
+        inset: 0;
+        min-height: 390px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(1px);
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(180deg, #fff, #f8fbff);
+        overflow: hidden
+    }
+
+    .face-back {
+        transform: rotateY(180deg) translateZ(1px);
+        background: linear-gradient(180deg, #ffffff, #f2fff9)
+    }
+
+    .label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--blue)
+    }
+
+    .face-back .label {
+        color: var(--green)
+    }
+
+    .pill {
+        align-self: flex-start;
+        border-radius: 999px;
+        padding: 5px 12px;
+        background: #dbeafe;
+        color: #1e40af;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 12px
+    }
+
+    .pill.o {
+        background: #dcfce7;
+        color: #166534
+    }
+
+    .pill.z {
+        background: #f3e8ff;
+        color: #6b21a8
+    }
+
+    .pill.s {
+        background: #fef3c7;
+        color: #92400e
+    }
+
+    .qtype {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 10px
+    }
+
+    .question {
+        font-size: clamp(19px, 2.8vw, 26px);
+        line-height: 1.45;
+        font-weight: 700;
+        flex: 0
+    }
+
+    .given {
+        margin-top: 18px;
+        padding: 15px 16px;
+        background: #eef2ff;
+        border: 1px solid #dbe3ff;
+        border-radius: 14px;
+        font-size: 17px;
+        line-height: 1.8;
+        color: #1e293b
+    }
+
+    .given span {
+        color: #1d4ed8;
+        font-weight: 700
+    }
+
+    .cue {
+        margin-top: auto;
+        padding-top: 18px;
+        font-size: 14px;
+        color: var(--muted)
+    }
+
+    .sol-body {
+        flex: 1;
+        overflow: auto;
+        padding-right: 4px
+    }
+
+    .sol-step {
+        background: #fff;
+        border: 1px solid #dbe5ef;
+        border-left: 5px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 11px
+    }
+
+    .sol-step.result {
+        border-left-color: var(--green);
+        background: #ecfdf5
+    }
+
+    .sol-l {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--muted);
+        margin-bottom: 6px
+    }
+
+    .formula {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #111827
+    }
+
+    .result .formula {
+        font-size: 18px;
+        font-weight: 800;
+        color: #166534
+    }
+
+    .note {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
+        margin-top: 4px
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px
+    }
+
+    .a-btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        color: #1f2937;
+        border-radius: 12px;
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer
+    }
+
+    .a-btn:hover {
+        background: #f1f5f9
+    }
+
+    .a-btn.no {
+        border-color: #fed7aa;
+        color: #c2410c
+    }
+
+    .a-btn.yes {
+        border-color: #bbf7d0;
+        color: #166534
+    }
+
+    .a-btn.primary {
+        background: #2563eb;
+        color: #fff;
+        border-color: #2563eb
+    }
+
+    .a-btn:disabled {
+        opacity: .45;
+        cursor: default
+    }
+
+    .nav-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap
+    }
+
+    .counter {
+        font-size: 14px;
+        color: var(--muted);
+        min-width: 64px;
+        text-align: center
+    }
+
+    .info {
+        max-width: 760px;
+        margin: 14px auto 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+        text-align: center
+    }
+
+    .kbd {
+        font-family: Consolas, monospace;
+        background: #e2e8f0;
+        border-radius: 5px;
+        padding: 1px 5px;
+        color: #334155
+    }
+
+    @media(max-width:620px) {
+        body {
+            padding: 8px
+        }
+
+        .app {
+            padding: 8px
+        }
+
+        .face {
+            padding: 20px
+        }
+
+        .card-wrap,
+        .card-inner,
+        .face {
+            min-height: 440px
+        }
+
+        .given {
+            font-size: 15px
+        }
+
+        .formula {
+            font-size: 14px
+        }
+
+        .actions .a-btn {
+            width: 100%;
+            max-width: 320px
+        }
+    }
+
+    .student-box {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+    }
+
+    .name-btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        color: #334155;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 13px;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+    }
+
+    .name-btn:hover {
+        background: #f1f5f9;
+    }
+
+    @media(max-width:620px) {
+        .student-box {
+            align-items: flex-start;
+        }
+    }
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="top">
-    <div>
-      <h1>Mathe 8 – Quader, Würfel & zusammengesetzte Körper</h1>
-      <p class="subtitle">Variable Lernkarten zu Volumen, Oberfläche, fehlenden Kanten, Einheiten und Zerlegen/Ergänzen.</p>
-    </div>
-    <span class="badge">▣ Klasse 8 · Sek I Berlin</span>
-  </div>
-  <div class="filters" id="filters"></div>
-  <div class="stats-row">
-    <span class="stat"><span class="dot" style="background:#16845f"></span><span id="sc">0</span> verstanden</span>
-    <span class="stat"><span class="dot" style="background:#c2410c"></span><span id="uc">0</span> nochmal</span>
-    <span class="stat"><span class="dot" style="background:#94a3b8"></span><span id="oc">0</span> offen</span>
-    <div class="prog-wrap"><div class="prog-bar" id="prog"></div></div><span class="pct" id="pct">0 %</span>
-  </div>
-
-  <div class="card-stage">
-    <div class="card-wrap" onclick="flip()" title="Karte anklicken zum Umdrehen">
-      <div class="card-inner" id="ci">
-        <div class="face face-front">
-          <div class="label">Aufgabe</div><div class="pill" id="pill">—</div><div class="qtype" id="qtype"></div>
-          <div class="question" id="qtext"></div><div class="given" id="given"></div><div class="cue">↻ Karte anklicken, um den Lösungsweg zu sehen.</div>
+    <div class="top">
+        <div>
+            <h1>Mathe 8 – Quader, Würfel & zusammengesetzte Körper</h1>
+            <p class="subtitle">Variable Lernkarten zu Volumen, Oberfläche, fehlenden Kanten, Einheiten und Zerlegen/Ergänzen.</p>
         </div>
-        <div class="face face-back">
-          <div class="label">Lösungsweg</div><div class="sol-body" id="sol"></div>
+        <div class="student-box">
+            <span class="badge">▣ Klasse 8 · Sek I Berlin</span>
+            <span class="badge" id="studentBadge">👤 Name wird geladen ...</span>
+            <button class="name-btn" onclick="changeStudentName(event)">Name ändern</button>
         </div>
-      </div>
     </div>
-  </div>
+    <div class="filters" id="filters"></div>
+    <div class="stats-row">
+        <span class="stat"><span class="dot" style="background:#16845f"></span><span id="sc">0</span> verstanden</span>
+        <span class="stat"><span class="dot" style="background:#c2410c"></span><span id="uc">0</span> nochmal</span>
+        <span class="stat"><span class="dot" style="background:#94a3b8"></span><span id="oc">0</span> offen</span>
+        <div class="prog-wrap">
+            <div class="prog-bar" id="prog"></div>
+        </div><span class="pct" id="pct">0 %</span>
+    </div>
 
-  <div class="actions" id="knownRow" style="visibility:hidden">
-    <button class="a-btn no" onclick="mark(false,event)">Nochmal mit neuen Zahlen</button>
-    <button class="a-btn yes" onclick="mark(true,event)">Verstanden</button>
-  </div>
-  <div class="actions">
-    <button class="a-btn" id="pb" onclick="nav(-1,event)">← Zurück</button><span class="counter" id="cnt">1 / 1</span>
-    <button class="a-btn" id="nb" onclick="nav(1,event)">Weiter →</button><button class="a-btn primary" onclick="newNumbers(event)">Neue Zahlen</button><button class="a-btn" onclick="shuffleDeck(event)">Mischen + neue Zahlen</button>
-  </div>
-  <p class="info">Tipp: Die Aufgabentypen bleiben gleich, aber die Maße werden zufällig neu erzeugt. So rechnen Lernende nicht nur auswendig dieselben Zahlen nach.</p>
+    <div class="card-stage">
+        <div class="card-wrap" onclick="flip()" title="Karte anklicken zum Umdrehen">
+            <div class="card-inner" id="ci">
+                <div class="face face-front">
+                    <div class="label">Aufgabe</div>
+                    <div class="pill" id="pill">—</div>
+                    <div class="qtype" id="qtype"></div>
+                    <div class="question" id="qtext"></div>
+                    <div class="given" id="given"></div>
+                    <div class="cue">↻ Karte anklicken, um den Lösungsweg zu sehen.</div>
+                </div>
+                <div class="face face-back">
+                    <div class="label">Lösungsweg</div>
+                    <div class="sol-body" id="sol"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions" id="knownRow" style="visibility:hidden">
+        <button class="a-btn no" onclick="mark(false,event)">Nochmal mit neuen Zahlen</button>
+        <button class="a-btn yes" onclick="mark(true,event)">Verstanden</button>
+    </div>
+    <div class="actions">
+        <button class="a-btn" id="pb" onclick="nav(-1,event)">← Zurück</button><span class="counter" id="cnt">1 / 1</span>
+        <button class="a-btn" id="nb" onclick="nav(1,event)">Weiter →</button><button class="a-btn primary" onclick="newNumbers(event)">Neue Zahlen</button><button class="a-btn" onclick="shuffleDeck(event)">Mischen + neue Zahlen</button>
+    </div>
+    <p class="info">Tipp: Die Aufgabentypen bleiben gleich, aber die Maße werden zufällig neu erzeugt. So rechnen Lernende nicht nur auswendig dieselben Zahlen nach.</p>
 </div>
 <script>
+// ── Schülername abfragen ─────────────────────────────────────
+const STUDENT_NAME_KEY = 'km_student_name';
+let STUDENT_NAME = '';
+
+function askStudentName() {
+    let name = localStorage.getItem(STUDENT_NAME_KEY);
+
+    while (!name || name.trim().length < 2) {
+        name = prompt('Bitte gib deinen Namen ein:');
+
+        if (name === null) {
+            name = '';
+        }
+
+        name = name.trim();
+    }
+
+    localStorage.setItem(STUDENT_NAME_KEY, name);
+    STUDENT_NAME = name;
+
+    // Für tracker.js verfügbar machen
+    window.KM_STUDENT_NAME = STUDENT_NAME;
+
+    const badge = document.getElementById('studentBadge');
+    if (badge) {
+        badge.textContent = '👤 ' + STUDENT_NAME;
+    }
+}
+
+function changeStudentName(e) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
+    let name = prompt('Bitte gib deinen Namen ein:', STUDENT_NAME);
+
+    if (!name) return;
+
+    name = name.trim();
+
+    if (name.length < 2) {
+        alert('Bitte gib mindestens 2 Zeichen ein.');
+        return;
+    }
+
+    localStorage.setItem(STUDENT_NAME_KEY, name);
+    STUDENT_NAME = name;
+    window.KM_STUDENT_NAME = STUDENT_NAME;
+
+    const badge = document.getElementById('studentBadge');
+    if (badge) {
+        badge.textContent = '👤 ' + STUDENT_NAME;
+    }
+}
+
+askStudentName();
 const CATS = ["Volumen", "Oberfläche", "Zusammengesetzt", "Sachaufgaben"];
 let activeCats = new Set(CATS);
-let deck = [], idx = 0, flipped = false, status = {};
-function rInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-function choice(a){return a[Math.floor(Math.random()*a.length)]}
-function fmt(n,dec=2){let s=(Math.round(n*Math.pow(10,dec))/Math.pow(10,dec)).toString().replace('.',','); return s}
-function step(l,f,note='',res=false){return {l,f,note,res}}
-function notSame(id, gen){let t, tries=0; do{t=gen();tries++}while(t.key===lastKeys[id]&&tries<50); lastKeys[id]=t.key; return t}
+let deck = [],
+    idx = 0,
+    flipped = false,
+    status = {};
+
+function rInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function choice(a) {
+    return a[Math.floor(Math.random() * a.length)]
+}
+
+function fmt(n, dec = 2) {
+    let s = (Math.round(n * Math.pow(10, dec)) / Math.pow(10, dec)).toString().replace('.', ',');
+    return s
+}
+
+function step(l, f, note = '', res = false) {
+    return {
+        l,
+        f,
+        note,
+        res
+    }
+}
+
+function notSame(id, gen) {
+    let t, tries = 0;
+    do {
+        t = gen();
+        tries++
+    } while (t.key === lastKeys[id] && tries < 50);
+    lastKeys[id] = t.key;
+    return t
+}
 let lastKeys = {};
 
-const TYPES = [
-{ id:'quader-volumen', cat:'Volumen', label:'Quader · Volumen', gen(){ return notSame(this.id,()=>{let a=rInt(3,14),b=rInt(2,10),c=rInt(2,9),V=a*b*c;return {key:`${a}-${b}-${c}`,q:'Berechne das Volumen des Quaders.',given:{a:a+' cm',b:b+' cm',c:c+' cm'},steps:[step('Formel','V = a · b · c'),step('Einsetzen',`V = ${a} · ${b} · ${c}`),step('Ergebnis',`V = ${V} cm³`,'Volumen wird in Kubikeinheiten angegeben.',true)]}})}},
-{ id:'wuerfel-volumen', cat:'Volumen', label:'Würfel · Volumen', gen(){ return notSame(this.id,()=>{let a=rInt(2,12),V=a*a*a;return {key:`${a}`,q:'Berechne das Volumen des Würfels.',given:{a:a+' cm'},steps:[step('Formel','V = a³ = a · a · a'),step('Einsetzen',`V = ${a}³ = ${a} · ${a} · ${a}`),step('Ergebnis',`V = ${V} cm³`, '', true)]}})}},
-{ id:'quader-oberflaeche', cat:'Oberfläche', label:'Quader · Oberfläche', gen(){ return notSame(this.id,()=>{let a=rInt(3,12),b=rInt(2,10),c=rInt(2,9),O=2*(a*b+a*c+b*c);return {key:`${a}-${b}-${c}`,q:'Berechne den Oberflächeninhalt des Quaders.',given:{a:a+' cm',b:b+' cm',c:c+' cm'},steps:[step('Formel','O = 2ab + 2ac + 2bc'),step('Teilflächen',`2ab = ${2*a*b} cm², 2ac = ${2*a*c} cm², 2bc = ${2*b*c} cm²`),step('Addieren',`O = ${2*a*b} + ${2*a*c} + ${2*b*c}`),step('Ergebnis',`O = ${O} cm²`,'Oberfläche wird in Quadrateinheiten angegeben.',true)]}})}},
-{ id:'wuerfel-oberflaeche', cat:'Oberfläche', label:'Würfel · Oberfläche', gen(){ return notSame(this.id,()=>{let a=rInt(2,13),O=6*a*a;return {key:`${a}`,q:'Berechne den Oberflächeninhalt des Würfels.',given:{a:a+' cm'},steps:[step('Formel','O = 6 · a²'),step('Einsetzen',`O = 6 · ${a}² = 6 · ${a*a}`),step('Ergebnis',`O = ${O} cm²`, '', true)]}})}},
-{ id:'kante-aus-volumen', cat:'Volumen', label:'Fehlende Kante · Quader', gen(){ return notSame(this.id,()=>{let a=rInt(3,12),b=rInt(2,9),c=rInt(2,10),V=a*b*c;return {key:`${a}-${b}-${c}`,q:'Bei einem Quader ist eine Kantenlänge unbekannt. Bestimme c.',given:{V:V+' cm³',a:a+' cm',b:b+' cm'},steps:[step('Formel','V = a · b · c'),step('Umstellen','c = V : (a · b)'),step('Einsetzen',`c = ${V} : (${a} · ${b}) = ${V} : ${a*b}`),step('Ergebnis',`c = ${c} cm`, '', true)]}})}},
-{ id:'wuerfel-kante-aus-volumen', cat:'Volumen', label:'Fehlende Kante · Würfel', gen(){ return notSame(this.id,()=>{let a=rInt(2,10),V=a*a*a;return {key:`${a}`,q:'Ein Würfel hat das angegebene Volumen. Bestimme die Kantenlänge a.',given:{V:V+' cm³'},steps:[step('Formel','V = a³'),step('Umkehren','a = ³√V'),step('Einsetzen',`a = ³√${V}`),step('Ergebnis',`a = ${a} cm`, '', true)]}})}},
-{ id:'einheiten-liter', cat:'Sachaufgaben', label:'Einheiten · Liter', gen(){ return notSame(this.id,()=>{let a=rInt(4,12),b=rInt(3,10),c=rInt(2,9),V=a*b*c,ml=V;return {key:`${a}-${b}-${c}`,q:'Ein kleiner quaderförmiger Behälter wird vollständig mit Wasser gefüllt. Wie viele Milliliter passen hinein?',given:{Länge:a+' cm',Breite:b+' cm',Höhe:c+' cm'},steps:[step('Volumen',`V = ${a} · ${b} · ${c} = ${V} cm³`),step('Umrechnung','1 cm³ = 1 ml'),step('Ergebnis',`${V} cm³ = ${ml} ml`, '', true)]}})}},
-{ id:'einheiten-dm-liter', cat:'Sachaufgaben', label:'Einheiten · dm³ und Liter', gen(){ return notSame(this.id,()=>{let a=rInt(3,9),b=rInt(2,7),c=rInt(2,6),V=a*b*c;return {key:`${a}-${b}-${c}`,q:'Eine Kiste hat die Form eines Quaders. Berechne das Volumen in dm³ und gib an, wie vielen Litern das entspricht.',given:{Länge:a+' dm',Breite:b+' dm',Höhe:c+' dm'},steps:[step('Volumen',`V = ${a} · ${b} · ${c} = ${V} dm³`),step('Umrechnung','1 dm³ = 1 Liter'),step('Ergebnis',`${V} dm³ = ${V} Liter`, '', true)]}})}},
-{ id:'zusammen-addieren', cat:'Zusammengesetzt', label:'Zusammengesetzter Körper · Addieren', gen(){ return notSame(this.id,()=>{let a=rInt(5,12),b=rInt(3,8),c=rInt(2,6),d=rInt(2,7),e=rInt(2,6),f=rInt(2,5);let V1=a*b*c,V2=d*e*f,V=V1+V2;return {key:`${a}-${b}-${c}-${d}-${e}-${f}`,q:'Ein Körper besteht aus zwei Quadern. Berechne das Gesamtvolumen, indem du die Teilkörper addierst.',given:{Quader_1:`${a} cm × ${b} cm × ${c} cm`,Quader_2:`${d} cm × ${e} cm × ${f} cm`},steps:[step('Teilvolumen 1',`V₁ = ${a} · ${b} · ${c} = ${V1} cm³`),step('Teilvolumen 2',`V₂ = ${d} · ${e} · ${f} = ${V2} cm³`),step('Addieren',`V = V₁ + V₂ = ${V1} + ${V2}`),step('Ergebnis',`V = ${V} cm³`, '', true)]}})}},
-{ id:'zusammen-abziehen', cat:'Zusammengesetzt', label:'Zusammengesetzter Körper · Ergänzen/Abziehen', gen(){ return notSame(this.id,()=>{let a=rInt(8,16),b=rInt(5,10),c=rInt(4,9),d=rInt(2,5),e=rInt(2,4),f=rInt(2,4);let Vg=a*b*c,Va=d*e*f,V=Vg-Va;return {key:`${a}-${b}-${c}-${d}-${e}-${f}`,q:'Aus einem großen Quader wird ein kleiner Quader herausgeschnitten. Berechne das verbleibende Volumen.',given:{großer_Quader:`${a} cm × ${b} cm × ${c} cm`,Ausschnitt:`${d} cm × ${e} cm × ${f} cm`},steps:[step('Großer Quader',`V_g = ${a} · ${b} · ${c} = ${Vg} cm³`),step('Ausschnitt',`V_a = ${d} · ${e} · ${f} = ${Va} cm³`),step('Abziehen',`V = V_g − V_a = ${Vg} − ${Va}`),step('Ergebnis',`V = ${V} cm³`, '', true)]}})}},
-{ id:'treppenkoerper', cat:'Zusammengesetzt', label:'Treppenkörper · Würfel zählen', gen(){ return notSame(this.id,()=>{let n=rInt(3,6),a=rInt(1,4);let cubes=n*(n+1)/2,V=cubes*a*a*a;return {key:`${n}-${a}`,q:'Ein Treppenkörper besteht aus Würfeln. In der unteren Reihe liegen n Würfel, darüber jeweils einer weniger. Berechne das Volumen.',given:{n:n+' Würfel unten',Kantenlänge:a+' cm'},steps:[step('Würfel zählen',`Anzahl = ${n} + ${n-1} + ... + 1 = ${cubes}`),step('Volumen eines Würfels',`V_W = ${a}³ = ${a*a*a} cm³`),step('Gesamtvolumen',`V = ${cubes} · ${a*a*a}`),step('Ergebnis',`V = ${V} cm³`, '', true)]}})}},
-{ id:'oberflaeche-verpackung', cat:'Sachaufgaben', label:'Verpackung · Oberfläche', gen(){ return notSame(this.id,()=>{let a=rInt(6,18),b=rInt(4,12),c=rInt(3,10),O=2*(a*b+a*c+b*c);return {key:`${a}-${b}-${c}`,q:'Eine quaderförmige Schachtel soll außen vollständig beklebt werden. Wie groß ist die zu beklebende Fläche?',given:{Länge:a+' cm',Breite:b+' cm',Höhe:c+' cm'},steps:[step('Gesucht','Die zu beklebende Fläche ist die Oberfläche des Quaders.'),step('Formel','O = 2ab + 2ac + 2bc'),step('Einsetzen',`O = 2·${a}·${b} + 2·${a}·${c} + 2·${b}·${c}`),step('Ergebnis',`O = ${O} cm²`, '', true)]}})}},
-{ id:'vergleich-volumen', cat:'Volumen', label:'Vergleich · Volumen', gen(){ return notSame(this.id,()=>{let a=rInt(3,9),b=rInt(3,9),c=rInt(3,9),x=rInt(3,10),y=rInt(3,10),z=rInt(3,10);let V1=a*b*c,V2=x*y*z;return {key:`${a}-${b}-${c}-${x}-${y}-${z}`,q:'Vergleiche die Volumina zweier Quader. Welcher Quader ist größer?',given:{Quader_A:`${a} cm × ${b} cm × ${c} cm`,Quader_B:`${x} cm × ${y} cm × ${z} cm`},steps:[step('Volumen A',`V_A = ${a} · ${b} · ${c} = ${V1} cm³`),step('Volumen B',`V_B = ${x} · ${y} · ${z} = ${V2} cm³`),step('Vergleich', V1===V2?'Beide Volumina sind gleich.':(V1>V2?`${V1} cm³ > ${V2} cm³`:`${V2} cm³ > ${V1} cm³`)),step('Ergebnis', V1===V2?'Beide Quader sind gleich groß.':(V1>V2?'Quader A hat das größere Volumen.':'Quader B hat das größere Volumen.'), '', true)]}})}},
-{ id:'netze-quader', cat:'Oberfläche', label:'Körpernetz · Quader', gen(){ return notSame(this.id,()=>{let a=rInt(4,12),b=rInt(3,9),c=rInt(2,8);let ab=a*b,ac=a*c,bc=b*c,O=2*(ab+ac+bc);return {key:`${a}-${b}-${c}`,q:'Ein Quadernetz besteht aus jeweils zwei gleich großen Rechtecken: a·b, a·c und b·c. Berechne daraus die Oberfläche.',given:{a:a+' cm',b:b+' cm',c:c+' cm'},steps:[step('Rechtecke im Netz',`a·b = ${ab} cm², a·c = ${ac} cm², b·c = ${bc} cm²`),step('Jeweils doppelt',`O = 2·${ab} + 2·${ac} + 2·${bc}`),step('Ergebnis',`O = ${O} cm²`, '', true)]}})}}
+const TYPES = [{
+        id: 'quader-volumen',
+        cat: 'Volumen',
+        label: 'Quader · Volumen',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(3, 14),
+                    b = rInt(2, 10),
+                    c = rInt(2, 9),
+                    V = a * b * c;
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Berechne das Volumen des Quaders.',
+                    given: {
+                        a: a + ' cm',
+                        b: b + ' cm',
+                        c: c + ' cm'
+                    },
+                    steps: [step('Formel', 'V = a · b · c'), step('Einsetzen', `V = ${a} · ${b} · ${c}`), step('Ergebnis', `V = ${V} cm³`, 'Volumen wird in Kubikeinheiten angegeben.', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'wuerfel-volumen',
+        cat: 'Volumen',
+        label: 'Würfel · Volumen',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(2, 12),
+                    V = a * a * a;
+                return {
+                    key: `${a}`,
+                    q: 'Berechne das Volumen des Würfels.',
+                    given: {
+                        a: a + ' cm'
+                    },
+                    steps: [step('Formel', 'V = a³ = a · a · a'), step('Einsetzen', `V = ${a}³ = ${a} · ${a} · ${a}`), step('Ergebnis', `V = ${V} cm³`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'quader-oberflaeche',
+        cat: 'Oberfläche',
+        label: 'Quader · Oberfläche',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(3, 12),
+                    b = rInt(2, 10),
+                    c = rInt(2, 9),
+                    O = 2 * (a * b + a * c + b * c);
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Berechne den Oberflächeninhalt des Quaders.',
+                    given: {
+                        a: a + ' cm',
+                        b: b + ' cm',
+                        c: c + ' cm'
+                    },
+                    steps: [step('Formel', 'O = 2ab + 2ac + 2bc'), step('Teilflächen', `2ab = ${2*a*b} cm², 2ac = ${2*a*c} cm², 2bc = ${2*b*c} cm²`), step('Addieren', `O = ${2*a*b} + ${2*a*c} + ${2*b*c}`), step('Ergebnis', `O = ${O} cm²`, 'Oberfläche wird in Quadrateinheiten angegeben.', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'wuerfel-oberflaeche',
+        cat: 'Oberfläche',
+        label: 'Würfel · Oberfläche',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(2, 13),
+                    O = 6 * a * a;
+                return {
+                    key: `${a}`,
+                    q: 'Berechne den Oberflächeninhalt des Würfels.',
+                    given: {
+                        a: a + ' cm'
+                    },
+                    steps: [step('Formel', 'O = 6 · a²'), step('Einsetzen', `O = 6 · ${a}² = 6 · ${a*a}`), step('Ergebnis', `O = ${O} cm²`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'kante-aus-volumen',
+        cat: 'Volumen',
+        label: 'Fehlende Kante · Quader',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(3, 12),
+                    b = rInt(2, 9),
+                    c = rInt(2, 10),
+                    V = a * b * c;
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Bei einem Quader ist eine Kantenlänge unbekannt. Bestimme c.',
+                    given: {
+                        V: V + ' cm³',
+                        a: a + ' cm',
+                        b: b + ' cm'
+                    },
+                    steps: [step('Formel', 'V = a · b · c'), step('Umstellen', 'c = V : (a · b)'), step('Einsetzen', `c = ${V} : (${a} · ${b}) = ${V} : ${a*b}`), step('Ergebnis', `c = ${c} cm`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'wuerfel-kante-aus-volumen',
+        cat: 'Volumen',
+        label: 'Fehlende Kante · Würfel',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(2, 10),
+                    V = a * a * a;
+                return {
+                    key: `${a}`,
+                    q: 'Ein Würfel hat das angegebene Volumen. Bestimme die Kantenlänge a.',
+                    given: {
+                        V: V + ' cm³'
+                    },
+                    steps: [step('Formel', 'V = a³'), step('Umkehren', 'a = ³√V'), step('Einsetzen', `a = ³√${V}`), step('Ergebnis', `a = ${a} cm`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'einheiten-liter',
+        cat: 'Sachaufgaben',
+        label: 'Einheiten · Liter',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(4, 12),
+                    b = rInt(3, 10),
+                    c = rInt(2, 9),
+                    V = a * b * c,
+                    ml = V;
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Ein kleiner quaderförmiger Behälter wird vollständig mit Wasser gefüllt. Wie viele Milliliter passen hinein?',
+                    given: {
+                        Länge: a + ' cm',
+                        Breite: b + ' cm',
+                        Höhe: c + ' cm'
+                    },
+                    steps: [step('Volumen', `V = ${a} · ${b} · ${c} = ${V} cm³`), step('Umrechnung', '1 cm³ = 1 ml'), step('Ergebnis', `${V} cm³ = ${ml} ml`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'einheiten-dm-liter',
+        cat: 'Sachaufgaben',
+        label: 'Einheiten · dm³ und Liter',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(3, 9),
+                    b = rInt(2, 7),
+                    c = rInt(2, 6),
+                    V = a * b * c;
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Eine Kiste hat die Form eines Quaders. Berechne das Volumen in dm³ und gib an, wie vielen Litern das entspricht.',
+                    given: {
+                        Länge: a + ' dm',
+                        Breite: b + ' dm',
+                        Höhe: c + ' dm'
+                    },
+                    steps: [step('Volumen', `V = ${a} · ${b} · ${c} = ${V} dm³`), step('Umrechnung', '1 dm³ = 1 Liter'), step('Ergebnis', `${V} dm³ = ${V} Liter`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'zusammen-addieren',
+        cat: 'Zusammengesetzt',
+        label: 'Zusammengesetzter Körper · Addieren',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(5, 12),
+                    b = rInt(3, 8),
+                    c = rInt(2, 6),
+                    d = rInt(2, 7),
+                    e = rInt(2, 6),
+                    f = rInt(2, 5);
+                let V1 = a * b * c,
+                    V2 = d * e * f,
+                    V = V1 + V2;
+                return {
+                    key: `${a}-${b}-${c}-${d}-${e}-${f}`,
+                    q: 'Ein Körper besteht aus zwei Quadern. Berechne das Gesamtvolumen, indem du die Teilkörper addierst.',
+                    given: {
+                        Quader_1: `${a} cm × ${b} cm × ${c} cm`,
+                        Quader_2: `${d} cm × ${e} cm × ${f} cm`
+                    },
+                    steps: [step('Teilvolumen 1', `V₁ = ${a} · ${b} · ${c} = ${V1} cm³`), step('Teilvolumen 2', `V₂ = ${d} · ${e} · ${f} = ${V2} cm³`), step('Addieren', `V = V₁ + V₂ = ${V1} + ${V2}`), step('Ergebnis', `V = ${V} cm³`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'zusammen-abziehen',
+        cat: 'Zusammengesetzt',
+        label: 'Zusammengesetzter Körper · Ergänzen/Abziehen',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(8, 16),
+                    b = rInt(5, 10),
+                    c = rInt(4, 9),
+                    d = rInt(2, 5),
+                    e = rInt(2, 4),
+                    f = rInt(2, 4);
+                let Vg = a * b * c,
+                    Va = d * e * f,
+                    V = Vg - Va;
+                return {
+                    key: `${a}-${b}-${c}-${d}-${e}-${f}`,
+                    q: 'Aus einem großen Quader wird ein kleiner Quader herausgeschnitten. Berechne das verbleibende Volumen.',
+                    given: {
+                        großer_Quader: `${a} cm × ${b} cm × ${c} cm`,
+                        Ausschnitt: `${d} cm × ${e} cm × ${f} cm`
+                    },
+                    steps: [step('Großer Quader', `V_g = ${a} · ${b} · ${c} = ${Vg} cm³`), step('Ausschnitt', `V_a = ${d} · ${e} · ${f} = ${Va} cm³`), step('Abziehen', `V = V_g − V_a = ${Vg} − ${Va}`), step('Ergebnis', `V = ${V} cm³`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'treppenkoerper',
+        cat: 'Zusammengesetzt',
+        label: 'Treppenkörper · Würfel zählen',
+        gen() {
+            return notSame(this.id, () => {
+                let n = rInt(3, 6),
+                    a = rInt(1, 4);
+                let cubes = n * (n + 1) / 2,
+                    V = cubes * a * a * a;
+                return {
+                    key: `${n}-${a}`,
+                    q: 'Ein Treppenkörper besteht aus Würfeln. In der unteren Reihe liegen n Würfel, darüber jeweils einer weniger. Berechne das Volumen.',
+                    given: {
+                        n: n + ' Würfel unten',
+                        Kantenlänge: a + ' cm'
+                    },
+                    steps: [step('Würfel zählen', `Anzahl = ${n} + ${n-1} + ... + 1 = ${cubes}`), step('Volumen eines Würfels', `V_W = ${a}³ = ${a*a*a} cm³`), step('Gesamtvolumen', `V = ${cubes} · ${a*a*a}`), step('Ergebnis', `V = ${V} cm³`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'oberflaeche-verpackung',
+        cat: 'Sachaufgaben',
+        label: 'Verpackung · Oberfläche',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(6, 18),
+                    b = rInt(4, 12),
+                    c = rInt(3, 10),
+                    O = 2 * (a * b + a * c + b * c);
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Eine quaderförmige Schachtel soll außen vollständig beklebt werden. Wie groß ist die zu beklebende Fläche?',
+                    given: {
+                        Länge: a + ' cm',
+                        Breite: b + ' cm',
+                        Höhe: c + ' cm'
+                    },
+                    steps: [step('Gesucht', 'Die zu beklebende Fläche ist die Oberfläche des Quaders.'), step('Formel', 'O = 2ab + 2ac + 2bc'), step('Einsetzen', `O = 2·${a}·${b} + 2·${a}·${c} + 2·${b}·${c}`), step('Ergebnis', `O = ${O} cm²`, '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'vergleich-volumen',
+        cat: 'Volumen',
+        label: 'Vergleich · Volumen',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(3, 9),
+                    b = rInt(3, 9),
+                    c = rInt(3, 9),
+                    x = rInt(3, 10),
+                    y = rInt(3, 10),
+                    z = rInt(3, 10);
+                let V1 = a * b * c,
+                    V2 = x * y * z;
+                return {
+                    key: `${a}-${b}-${c}-${x}-${y}-${z}`,
+                    q: 'Vergleiche die Volumina zweier Quader. Welcher Quader ist größer?',
+                    given: {
+                        Quader_A: `${a} cm × ${b} cm × ${c} cm`,
+                        Quader_B: `${x} cm × ${y} cm × ${z} cm`
+                    },
+                    steps: [step('Volumen A', `V_A = ${a} · ${b} · ${c} = ${V1} cm³`), step('Volumen B', `V_B = ${x} · ${y} · ${z} = ${V2} cm³`), step('Vergleich', V1 === V2 ? 'Beide Volumina sind gleich.' : (V1 > V2 ? `${V1} cm³ > ${V2} cm³` : `${V2} cm³ > ${V1} cm³`)), step('Ergebnis', V1 === V2 ? 'Beide Quader sind gleich groß.' : (V1 > V2 ? 'Quader A hat das größere Volumen.' : 'Quader B hat das größere Volumen.'), '', true)]
+                }
+            })
+        }
+    },
+    {
+        id: 'netze-quader',
+        cat: 'Oberfläche',
+        label: 'Körpernetz · Quader',
+        gen() {
+            return notSame(this.id, () => {
+                let a = rInt(4, 12),
+                    b = rInt(3, 9),
+                    c = rInt(2, 8);
+                let ab = a * b,
+                    ac = a * c,
+                    bc = b * c,
+                    O = 2 * (ab + ac + bc);
+                return {
+                    key: `${a}-${b}-${c}`,
+                    q: 'Ein Quadernetz besteht aus jeweils zwei gleich großen Rechtecken: a·b, a·c und b·c. Berechne daraus die Oberfläche.',
+                    given: {
+                        a: a + ' cm',
+                        b: b + ' cm',
+                        c: c + ' cm'
+                    },
+                    steps: [step('Rechtecke im Netz', `a·b = ${ab} cm², a·c = ${ac} cm², b·c = ${bc} cm²`), step('Jeweils doppelt', `O = 2·${ab} + 2·${ac} + 2·${bc}`), step('Ergebnis', `O = ${O} cm²`, '', true)]
+                }
+            })
+        }
+    }
 ];
 
-function buildDeck(){ deck = TYPES.filter(t=>activeCats.has(t.cat)).map(t=>({type:t,data:t.gen()})); idx=0; flipped=false; document.getElementById('ci').classList.remove('flipped'); document.getElementById('knownRow').style.visibility='hidden'; render(); }
-function flip(){ flipped=!flipped; document.getElementById('ci').classList.toggle('flipped',flipped); document.getElementById('knownRow').style.visibility=flipped?'visible':'hidden'; }
-function stop(e){ if(e){e.stopPropagation(); e.preventDefault();} }
-function nav(d,e){ stop(e); idx=Math.max(0,Math.min(deck.length-1,idx+d)); flipped=false; document.getElementById('ci').classList.remove('flipped'); document.getElementById('knownRow').style.visibility='hidden'; render(); }
-function newNumbers(e){ stop(e); if(!deck.length)return; deck[idx].data=deck[idx].type.gen(); flipped=false; document.getElementById('ci').classList.remove('flipped'); document.getElementById('knownRow').style.visibility='hidden'; render(); }
-function mark(k,e){ stop(e); if(!deck.length)return; status[deck[idx].type.id]=k?'k':'u'; updateStats(); if(k){ if(idx<deck.length-1)setTimeout(()=>nav(1),250); } else { deck[idx].data=deck[idx].type.gen(); flipped=false; document.getElementById('ci').classList.remove('flipped'); document.getElementById('knownRow').style.visibility='hidden'; render(); } }
-function shuffleDeck(e){ stop(e); deck = TYPES.filter(t=>activeCats.has(t.cat)).map(t=>({type:t,data:t.gen()})); for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} idx=0; flipped=false; document.getElementById('ci').classList.remove('flipped'); document.getElementById('knownRow').style.visibility='hidden'; render(); }
-function cls(cat){return cat==='Oberfläche'?' o':cat==='Zusammengesetzt'?' z':cat==='Sachaufgaben'?' s':''}
-function render(){ if(!deck.length){document.getElementById('qtext').textContent='Keine Karten in dieser Auswahl.';document.getElementById('given').innerHTML='';document.getElementById('sol').innerHTML='';document.getElementById('cnt').textContent='0 / 0';return;} let d=deck[idx].data,t=deck[idx].type; document.getElementById('pill').className='pill'+cls(t.cat); document.getElementById('pill').textContent=t.cat; document.getElementById('qtype').textContent=t.label; document.getElementById('qtext').textContent=d.q; let keys=Object.keys(d.given||{}); let giv=document.getElementById('given'); if(keys.length){giv.style.display='block'; giv.innerHTML=keys.map(k=>`<span>${k.replaceAll('_',' ')}</span> = ${d.given[k]}`).join(' &ensp;|&ensp; ');}else{giv.style.display='none';} document.getElementById('sol').innerHTML=d.steps.map(s=>`<div class="sol-step ${s.res?'result':''}"><div class="sol-l">${s.l}</div><div class="formula">${s.f}</div>${s.note?`<div class="note">${s.note}</div>`:''}</div>`).join(''); document.getElementById('cnt').textContent=(idx+1)+' / '+deck.length; document.getElementById('pb').disabled=idx===0; document.getElementById('nb').disabled=idx===deck.length-1; updateStats(); }
-function updateStats(){let k=0,u=0;deck.forEach(x=>{let s=status[x.type.id];if(s==='k')k++;else if(s==='u')u++;});let o=deck.length-k-u;document.getElementById('sc').textContent=k;document.getElementById('uc').textContent=u;document.getElementById('oc').textContent=o;let p=deck.length?Math.round(k/deck.length*100):0;document.getElementById('prog').style.width=p+'%';document.getElementById('pct').textContent=p+' %';}
-function buildFilters(){let f=document.getElementById('filters'); CATS.forEach(cat=>{let b=document.createElement('button');b.className='f-btn on';b.textContent=cat;b.onclick=()=>{if(activeCats.has(cat)&&activeCats.size>1)activeCats.delete(cat);else activeCats.add(cat);b.classList.toggle('on',activeCats.has(cat));buildDeck();};f.appendChild(b);});}
-buildFilters(); buildDeck(); shuffleDeck();
+function buildDeck() {
+    deck = TYPES.filter(t => activeCats.has(t.cat)).map(t => ({
+        type: t,
+        data: t.gen()
+    }));
+    idx = 0;
+    flipped = false;
+    document.getElementById('ci').classList.remove('flipped');
+    document.getElementById('knownRow').style.visibility = 'hidden';
+    render();
+}
+
+function flip() {
+    flipped = !flipped;
+    document.getElementById('ci').classList.toggle('flipped', flipped);
+    document.getElementById('knownRow').style.visibility = flipped ? 'visible' : 'hidden';
+}
+
+function stop(e) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}
+
+function nav(d, e) {
+    stop(e);
+    idx = Math.max(0, Math.min(deck.length - 1, idx + d));
+    flipped = false;
+    document.getElementById('ci').classList.remove('flipped');
+    document.getElementById('knownRow').style.visibility = 'hidden';
+    render();
+}
+
+function newNumbers(e) {
+    stop(e);
+    if (!deck.length) return;
+    deck[idx].data = deck[idx].type.gen();
+    flipped = false;
+    document.getElementById('ci').classList.remove('flipped');
+    document.getElementById('knownRow').style.visibility = 'hidden';
+    render();
+}
+
+function mark(k, e) {
+    stop(e);
+    if (!deck.length) return;
+    status[deck[idx].type.id] = k ? 'k' : 'u';
+    updateStats();
+    if (k) {
+        if (idx < deck.length - 1) setTimeout(() => nav(1), 250);
+    } else {
+        deck[idx].data = deck[idx].type.gen();
+        flipped = false;
+        document.getElementById('ci').classList.remove('flipped');
+        document.getElementById('knownRow').style.visibility = 'hidden';
+        render();
+    }
+}
+
+function shuffleDeck(e) {
+    stop(e);
+    deck = TYPES.filter(t => activeCats.has(t.cat)).map(t => ({
+        type: t,
+        data: t.gen()
+    }));
+    for (let i = deck.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    idx = 0;
+    flipped = false;
+    document.getElementById('ci').classList.remove('flipped');
+    document.getElementById('knownRow').style.visibility = 'hidden';
+    render();
+}
+
+function cls(cat) {
+    return cat === 'Oberfläche' ? ' o' : cat === 'Zusammengesetzt' ? ' z' : cat === 'Sachaufgaben' ? ' s' : ''
+}
+
+function render() {
+    if (!deck.length) {
+        document.getElementById('qtext').textContent = 'Keine Karten in dieser Auswahl.';
+        document.getElementById('given').innerHTML = '';
+        document.getElementById('sol').innerHTML = '';
+        document.getElementById('cnt').textContent = '0 / 0';
+        return;
+    }
+    let d = deck[idx].data,
+        t = deck[idx].type;
+    document.getElementById('pill').className = 'pill' + cls(t.cat);
+    document.getElementById('pill').textContent = t.cat;
+    document.getElementById('qtype').textContent = t.label;
+    document.getElementById('qtext').textContent = d.q;
+    let keys = Object.keys(d.given || {});
+    let giv = document.getElementById('given');
+    if (keys.length) {
+        giv.style.display = 'block';
+        giv.innerHTML = keys.map(k => `<span>${k.replaceAll('_',' ')}</span> = ${d.given[k]}`).join(' &ensp;|&ensp; ');
+    } else {
+        giv.style.display = 'none';
+    }
+    document.getElementById('sol').innerHTML = d.steps.map(s => `<div class="sol-step ${s.res?'result':''}"><div class="sol-l">${s.l}</div><div class="formula">${s.f}</div>${s.note?`<div class="note">${s.note}</div>`:''}</div>`).join('');
+    document.getElementById('cnt').textContent = (idx + 1) + ' / ' + deck.length;
+    document.getElementById('pb').disabled = idx === 0;
+    document.getElementById('nb').disabled = idx === deck.length - 1;
+    updateStats();
+}
+
+function updateStats() {
+    let k = 0,
+        u = 0;
+    deck.forEach(x => {
+        let s = status[x.type.id];
+        if (s === 'k') k++;
+        else if (s === 'u') u++;
+    });
+    let o = deck.length - k - u;
+    document.getElementById('sc').textContent = k;
+    document.getElementById('uc').textContent = u;
+    document.getElementById('oc').textContent = o;
+    let p = deck.length ? Math.round(k / deck.length * 100) : 0;
+    document.getElementById('prog').style.width = p + '%';
+    document.getElementById('pct').textContent = p + ' %';
+}
+
+function buildFilters() {
+    let f = document.getElementById('filters');
+    CATS.forEach(cat => {
+        let b = document.createElement('button');
+        b.className = 'f-btn on';
+        b.textContent = cat;
+        b.onclick = () => {
+            if (activeCats.has(cat) && activeCats.size > 1) activeCats.delete(cat);
+            else activeCats.add(cat);
+            b.classList.toggle('on', activeCats.has(cat));
+            buildDeck();
+        };
+        f.appendChild(b);
+    });
+}
+buildFilters();
+buildDeck();
+shuffleDeck();
 </script>
-<script src="tracker.js"></script>
 </body>
 </html>
