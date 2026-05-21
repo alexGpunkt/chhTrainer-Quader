@@ -563,8 +563,12 @@
     <div class="calc-grid">
       <button class="calc-key clear" onclick="calcClear(event)">C</button>
       <button class="calc-key" onclick="calcBack(event)">⌫</button>
+      <button class="calc-key op" onclick="calcUnary(event,'sqrt')">√x</button>
+      <button class="calc-key op" onclick="calcUnary(event,'cbrt')">³√x</button>
       <button class="calc-key op" onclick="calcAdd(event,'(')">(</button>
       <button class="calc-key op" onclick="calcAdd(event,')')">)</button>
+      <button class="calc-key op" onclick="calcAdd(event,'√(')">√(</button>
+      <button class="calc-key op" onclick="calcAdd(event,'³√(')">³√(</button>
       <button class="calc-key" onclick="calcAdd(event,'7')">7</button>
       <button class="calc-key" onclick="calcAdd(event,'8')">8</button>
       <button class="calc-key" onclick="calcAdd(event,'9')">9</button>
@@ -582,7 +586,7 @@
       <button class="calc-key equal" onclick="calcEval(event)">=</button>
       <button class="calc-key op" onclick="calcAdd(event,'+')">+</button>
     </div>
-    <div class="calc-hint">Tipp: Du kannst auch mit der Tastatur rechnen. Punkt oder Komma funktionieren beide.</div>
+    <div class="calc-hint">Tipp: √x und ³√x berechnen die Wurzel aus der aktuellen Anzeige. Mit √( … ) und ³√( … ) kannst du Wurzeln auch in Rechnungen verwenden.</div>
   </div>
 </div>
 
@@ -1326,19 +1330,60 @@ function calcAdd(e,val){
 }
 function calcClear(e){ toolStop(e); const d=document.getElementById('calcDisplay'); if(d){ d.value=''; d.focus(); } }
 function calcBack(e){ toolStop(e); const d=document.getElementById('calcDisplay'); if(d){ d.value=d.value.slice(0,-1); d.focus(); } }
+function normalizeCalcExpression(value){
+    return String(value || '')
+        .replace(/,/g,'.')
+        .replace(/×/g,'*')
+        .replace(/÷/g,'/')
+        .replace(/−/g,'-')
+        .replace(/³√\s*\(/g,'cbrt(')
+        .replace(/√\s*\(/g,'sqrt(')
+        .replace(/cbrt\s*\(/g,'Math.cbrt(')
+        .replace(/sqrt\s*\(/g,'Math.sqrt(');
+}
+function calcFormatNumber(n){
+    return String(Math.round(n*100000000)/100000000).replace('.', ',');
+}
+function calcCompute(value){
+    const expr = normalizeCalcExpression(value);
+    if(!/^[0-9+\-*/().\sMathsqrtcbrt]*$/.test(expr)) throw new Error('Ungültige Eingabe');
+    const result = Function('"use strict"; return (' + expr + ')')();
+    if(!Number.isFinite(result)) throw new Error('Nicht berechenbar');
+    return result;
+}
+function calcShowError(d){
+    d.value='Fehler';
+    setTimeout(()=>{ if(d.value==='Fehler') d.value=''; }, 900);
+}
+function calcUnary(e, mode){
+    toolStop(e);
+    const d=document.getElementById('calcDisplay');
+    if(!d) return;
+    try{
+        const x = calcCompute(d.value);
+        let result;
+        if(mode === 'sqrt'){
+            if(x < 0) throw new Error('Quadratwurzel aus negativer Zahl nicht möglich');
+            result = Math.sqrt(x);
+        }else if(mode === 'cbrt'){
+            result = Math.cbrt(x);
+        }else{
+            throw new Error('Unbekannte Funktion');
+        }
+        d.value = calcFormatNumber(result);
+    }catch(err){
+        calcShowError(d);
+    }
+    d.focus();
+}
 function calcEval(e){
     toolStop(e);
     const d=document.getElementById('calcDisplay');
     if(!d) return;
     try{
-        let expr=d.value.replace(/,/g,'.').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
-        if(!/^[0-9+\-*/().\s]*$/.test(expr)) throw new Error('Ungültige Eingabe');
-        const result = Function('"use strict"; return (' + expr + ')')();
-        if(!Number.isFinite(result)) throw new Error('Nicht berechenbar');
-        d.value = String(Math.round(result*100000000)/100000000).replace('.', ',');
+        d.value = calcFormatNumber(calcCompute(d.value));
     }catch(err){
-        d.value='Fehler';
-        setTimeout(()=>{ if(d.value==='Fehler') d.value=''; }, 900);
+        calcShowError(d);
     }
     d.focus();
 }
