@@ -151,14 +151,19 @@ const PING_INTERVAL_MS = 30000;
   }, PING_INTERVAL_MS);
 
   window.addEventListener('beforeunload', () => {
+    if (leaveTimer) { clearTimeout(leaveTimer); }
     sendLeave();
     clearInterval(intervalId);
   });
 
+  // Puffer: erst nach 5 Sekunden als "weg" werten
+  // (verhindert false-negatives bei kurzen Tab-Wechseln)
+  let leaveTimer = null;
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-      sendLeave();
+      leaveTimer = setTimeout(() => sendLeave(), 5000);
     } else {
+      if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; }
       sendPing('ping');
     }
   });
