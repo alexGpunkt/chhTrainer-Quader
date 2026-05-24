@@ -175,14 +175,14 @@
     .card-wrap {
         width: 100%;
         max-width: 760px;
-        min-height: 390px;
+        min-height: 430px;
         perspective: 1400px;
         cursor: pointer
     }
 
     .card-inner {
         width: 100%;
-        min-height: 390px;
+        min-height: 430px;
         position: relative;
         transform-style: preserve-3d;
         transition: transform .55s cubic-bezier(.4, .2, .2, 1)
@@ -195,7 +195,7 @@
     .face {
         position: absolute;
         inset: 0;
-        min-height: 390px;
+        min-height: 430px;
         border-radius: 24px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
@@ -280,6 +280,61 @@
     .given span {
         color: #1d4ed8;
         font-weight: 700
+    }
+
+    /* ── Aufgabenskizzen: Text links, SVG-Skizze rechts ─────────────── */
+    .task-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: clamp(14px, 3vw, 28px);
+        margin-top: 4px;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .task-text {
+        flex: 1 1 56%;
+        min-width: 0;
+    }
+
+    .sketch-box {
+        flex: 0 1 38%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(8px, 1.8vw, 14px);
+        border: 1px solid #dbe3ff;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+        min-height: clamp(150px, 25vw, 245px);
+    }
+
+    .sketch-box img {
+        display: block;
+        width: min(100%, 300px);
+        max-height: clamp(145px, 26vw, 260px);
+        height: auto;
+        object-fit: contain;
+    }
+
+    @media(max-width:760px) {
+        .task-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .sketch-box {
+            width: 100%;
+            min-height: 160px;
+        }
+
+        .sketch-box img {
+            width: min(92%, 280px);
+            max-height: 210px;
+            margin: 0 auto;
+        }
     }
 
     .cue {
@@ -597,8 +652,15 @@
                     <div class="label">Aufgabe</div>
                     <div class="pill" id="pill">—</div>
                     <div class="qtype" id="qtype"></div>
-                    <div class="question" id="qtext"></div>
-                    <div class="given" id="given"></div>
+                    <div class="task-row">
+                        <div class="task-text">
+                            <div class="question" id="qtext"></div>
+                            <div class="given" id="given"></div>
+                        </div>
+                        <div class="sketch-box" id="sketchBox" aria-hidden="true">
+                            <img id="taskSketch" src="" alt="Skizze zur Aufgabe">
+                        </div>
+                    </div>
                     <div class="cue">↻ Karte anklicken, um den Lösungsweg zu sehen.</div>
                 </div>
                 <div class="face face-back">
@@ -1046,6 +1108,60 @@ const TYPES = [{
     }
 ];
 
+// SVG-Skizzen zu den Aufgabentypen.
+// Die Dateien müssen im selben Ordner wie diese HTML-Datei liegen.
+// Hinweis: Aufgabe 2, 9 und 14 bleiben ohne Skizze, weil sie in der Vorgabe nicht genannt wurden.
+const TASK_SKETCHES = {
+    'quader-volumen': 'wuerfel.svg',                 // Aufgabe 1
+    'quader-oberflaeche': 'quader.svg',              // Aufgabe 3
+    'wuerfel-oberflaeche': 'quader.svg',             // Aufgabe 4
+    'kante-aus-volumen': 'wurfel.svg',               // Aufgabe 5
+    'wuerfel-kante-aus-volumen': 'quader.svg',       // Aufgabe 6
+    'einheiten-liter': 'quader.svg',                 // Aufgabe 7
+    'einheiten-dm-liter': 'quader.svg',              // Aufgabe 8
+    'zusammen-abziehen': 'zusammengesetzterKoerper.svg', // Aufgabe 10
+    'treppenkoerper': 'treppenkoerper.svg',          // Aufgabe 11
+    'oberflaeche-verpackung': 'quader.svg',          // Aufgabe 12
+    'vergleich-volumen': 'wuerfel.svg'               // Aufgabe 13
+};
+
+TYPES.forEach(t => {
+    if (TASK_SKETCHES[t.id]) t.sketch = TASK_SKETCHES[t.id];
+});
+
+function setTaskSketch(file, label) {
+    const box = document.getElementById('sketchBox');
+    const img = document.getElementById('taskSketch');
+    if (!box || !img) return;
+
+    if (!file) {
+        box.style.display = 'none';
+        img.removeAttribute('src');
+        img.alt = 'Keine Skizze vorhanden';
+        return;
+    }
+
+    box.style.display = 'flex';
+    box.setAttribute('aria-hidden', 'false');
+    img.alt = 'Skizze zu: ' + (label || 'Aufgabe');
+
+    // Kleine Fehlertoleranz bei der Schreibweise: wuerfel.svg / wurfel.svg.
+    img.onerror = function () {
+        if (file === 'wurfel.svg') {
+            img.onerror = null;
+            img.src = 'wuerfel.svg';
+        } else if (file === 'wuerfel.svg') {
+            img.onerror = null;
+            img.src = 'wurfel.svg';
+        } else {
+            img.onerror = null;
+            box.style.display = 'none';
+        }
+    };
+    img.src = file;
+}
+
+
 function buildDeck() {
     deck = TYPES.filter(t => activeCats.has(t.cat)).map(t => ({
         type: t,
@@ -1133,6 +1249,7 @@ function render() {
         document.getElementById('given').innerHTML = '';
         document.getElementById('sol').innerHTML = '';
         document.getElementById('cnt').textContent = '0 / 0';
+        setTaskSketch(null);
         resetAnswerBox();
         return;
     }
@@ -1141,6 +1258,7 @@ function render() {
     document.getElementById('pill').className = 'pill' + cls(t.cat);
     document.getElementById('pill').textContent = t.cat;
     document.getElementById('qtype').textContent = t.label;
+    setTaskSketch(t.sketch || null, t.label);
     document.getElementById('qtext').textContent = d.q;
     let keys = Object.keys(d.given || {});
     let giv = document.getElementById('given');
@@ -1400,3 +1518,5 @@ document.addEventListener('keydown', function(e){
 <script src="tracker.js"></script>
 </body>
 </html>
+
+
