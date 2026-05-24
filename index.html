@@ -175,14 +175,14 @@
     .card-wrap {
         width: 100%;
         max-width: 760px;
-        min-height: 430px;
+        min-height: 390px;
         perspective: 1400px;
         cursor: pointer
     }
 
     .card-inner {
         width: 100%;
-        min-height: 430px;
+        min-height: 390px;
         position: relative;
         transform-style: preserve-3d;
         transition: transform .55s cubic-bezier(.4, .2, .2, 1)
@@ -195,7 +195,7 @@
     .face {
         position: absolute;
         inset: 0;
-        min-height: 430px;
+        min-height: 390px;
         border-radius: 24px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
@@ -282,59 +282,40 @@
         font-weight: 700
     }
 
-    /* ── Aufgabenskizzen: Text links, SVG-Skizze rechts ─────────────── */
-    .task-row {
-        display: flex;
+    .task-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(170px, 34%);
         align-items: center;
-        justify-content: space-between;
         gap: clamp(14px, 3vw, 28px);
-        margin-top: 4px;
         flex: 1;
-        min-height: 0;
     }
 
     .task-text {
-        flex: 1 1 56%;
         min-width: 0;
     }
 
-    .sketch-box {
-        flex: 0 1 38%;
-        display: none;
+    .task-sketch {
+        display: flex;
         align-items: center;
         justify-content: center;
-        padding: clamp(8px, 1.8vw, 14px);
+        width: 100%;
+        min-height: 170px;
+        padding: clamp(8px, 1.8vw, 16px);
         border: 1px solid #dbe3ff;
         border-radius: 18px;
-        background: #ffffff;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
-        min-height: clamp(150px, 25vw, 245px);
+        background: rgba(255, 255, 255, .76);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
     }
 
-    .sketch-box img {
+    .task-sketch img {
         display: block;
-        width: min(100%, 300px);
-        max-height: clamp(145px, 26vw, 260px);
-        height: auto;
+        width: min(100%, 270px);
+        max-height: min(34vh, 260px);
         object-fit: contain;
     }
 
-    @media(max-width:760px) {
-        .task-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .sketch-box {
-            width: 100%;
-            min-height: 160px;
-        }
-
-        .sketch-box img {
-            width: min(92%, 280px);
-            max-height: 210px;
-            margin: 0 auto;
-        }
+    .task-sketch.is-hidden {
+        display: none;
     }
 
     .cue {
@@ -489,6 +470,20 @@
 
         .given {
             font-size: 15px
+        }
+
+        .task-layout {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+
+        .task-sketch {
+            min-height: 150px;
+        }
+
+        .task-sketch img {
+            width: min(100%, 240px);
+            max-height: 220px;
         }
 
         .formula {
@@ -651,15 +646,15 @@
                 <div class="face face-front">
                     <div class="label">Aufgabe</div>
                     <div class="pill" id="pill">—</div>
-                    <div class="qtype" id="qtype"></div>
-                    <div class="task-row">
+                    <div class="task-layout">
                         <div class="task-text">
+                            <div class="qtype" id="qtype"></div>
                             <div class="question" id="qtext"></div>
                             <div class="given" id="given"></div>
                         </div>
-                        <div class="sketch-box" id="sketchBox" aria-hidden="true">
+                        <figure class="task-sketch" id="taskSketchBox" aria-hidden="true">
                             <img id="taskSketch" src="" alt="Skizze zur Aufgabe">
-                        </div>
+                        </figure>
                     </div>
                     <div class="cue">↻ Karte anklicken, um den Lösungsweg zu sehen.</div>
                 </div>
@@ -786,6 +781,7 @@ const TYPES = [{
         id: 'quader-volumen',
         cat: 'Volumen',
         label: 'Quader · Volumen',
+        sketch: 'quader.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(3, 14),
@@ -809,6 +805,7 @@ const TYPES = [{
         id: 'wuerfel-volumen',
         cat: 'Volumen',
         label: 'Würfel · Volumen',
+        sketch: 'wuerfel.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(2, 12),
@@ -828,6 +825,7 @@ const TYPES = [{
         id: 'quader-oberflaeche',
         cat: 'Oberfläche',
         label: 'Quader · Oberfläche',
+        sketch: 'quader.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(3, 12),
@@ -851,6 +849,7 @@ const TYPES = [{
         id: 'wuerfel-oberflaeche',
         cat: 'Oberfläche',
         label: 'Würfel · Oberfläche',
+        sketch: 'wuerfel.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(2, 13),
@@ -870,6 +869,7 @@ const TYPES = [{
         id: 'kante-aus-volumen',
         cat: 'Volumen',
         label: 'Fehlende Kante · Quader',
+        sketch: 'quader.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(3, 12),
@@ -893,6 +893,7 @@ const TYPES = [{
         id: 'wuerfel-kante-aus-volumen',
         cat: 'Volumen',
         label: 'Fehlende Kante · Würfel',
+        sketch: 'wuerfel.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(2, 10),
@@ -912,6 +913,7 @@ const TYPES = [{
         id: 'einheiten-liter',
         cat: 'Sachaufgaben',
         label: 'Einheiten · Liter',
+        sketch: 'herausgeschnittenerKoerper.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(4, 12),
@@ -936,6 +938,7 @@ const TYPES = [{
         id: 'einheiten-dm-liter',
         cat: 'Sachaufgaben',
         label: 'Einheiten · dm³ und Liter',
+        sketch: 'quader.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(3, 9),
@@ -959,6 +962,7 @@ const TYPES = [{
         id: 'zusammen-addieren',
         cat: 'Zusammengesetzt',
         label: 'Zusammengesetzter Körper · Addieren',
+        sketch: 'zusammengesetzterKoerper.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(5, 12),
@@ -986,6 +990,7 @@ const TYPES = [{
         id: 'zusammen-abziehen',
         cat: 'Zusammengesetzt',
         label: 'Zusammengesetzter Körper · Ergänzen/Abziehen',
+        sketch: 'herausgeschnittenerKoerper.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(8, 16),
@@ -1013,6 +1018,7 @@ const TYPES = [{
         id: 'treppenkoerper',
         cat: 'Zusammengesetzt',
         label: 'Treppenkörper · Würfel zählen',
+        sketch: 'treppenkoerper.svg',
         gen() {
             return notSame(this.id, () => {
                 let n = rInt(3, 6),
@@ -1035,6 +1041,7 @@ const TYPES = [{
         id: 'oberflaeche-verpackung',
         cat: 'Sachaufgaben',
         label: 'Verpackung · Oberfläche',
+        sketch: 'quader.svg',
         gen() {
             return notSame(this.id, () => {
                 let a = rInt(6, 18),
@@ -1107,60 +1114,6 @@ const TYPES = [{
         }
     }
 ];
-
-// SVG-Skizzen zu den Aufgabentypen.
-// Die Dateien müssen im selben Ordner wie diese HTML-Datei liegen.
-// Hinweis: Aufgabe 2, 9 und 14 bleiben ohne Skizze, weil sie in der Vorgabe nicht genannt wurden.
-const TASK_SKETCHES = {
-    'quader-volumen': 'wuerfel.svg',                 // Aufgabe 1
-    'quader-oberflaeche': 'quader.svg',              // Aufgabe 3
-    'wuerfel-oberflaeche': 'quader.svg',             // Aufgabe 4
-    'kante-aus-volumen': 'wurfel.svg',               // Aufgabe 5
-    'wuerfel-kante-aus-volumen': 'quader.svg',       // Aufgabe 6
-    'einheiten-liter': 'quader.svg',                 // Aufgabe 7
-    'einheiten-dm-liter': 'quader.svg',              // Aufgabe 8
-    'zusammen-abziehen': 'zusammengesetzterKoerper.svg', // Aufgabe 10
-    'treppenkoerper': 'treppenkoerper.svg',          // Aufgabe 11
-    'oberflaeche-verpackung': 'quader.svg',          // Aufgabe 12
-    'vergleich-volumen': 'wuerfel.svg'               // Aufgabe 13
-};
-
-TYPES.forEach(t => {
-    if (TASK_SKETCHES[t.id]) t.sketch = TASK_SKETCHES[t.id];
-});
-
-function setTaskSketch(file, label) {
-    const box = document.getElementById('sketchBox');
-    const img = document.getElementById('taskSketch');
-    if (!box || !img) return;
-
-    if (!file) {
-        box.style.display = 'none';
-        img.removeAttribute('src');
-        img.alt = 'Keine Skizze vorhanden';
-        return;
-    }
-
-    box.style.display = 'flex';
-    box.setAttribute('aria-hidden', 'false');
-    img.alt = 'Skizze zu: ' + (label || 'Aufgabe');
-
-    // Kleine Fehlertoleranz bei der Schreibweise: wuerfel.svg / wurfel.svg.
-    img.onerror = function () {
-        if (file === 'wurfel.svg') {
-            img.onerror = null;
-            img.src = 'wuerfel.svg';
-        } else if (file === 'wuerfel.svg') {
-            img.onerror = null;
-            img.src = 'wurfel.svg';
-        } else {
-            img.onerror = null;
-            box.style.display = 'none';
-        }
-    };
-    img.src = file;
-}
-
 
 function buildDeck() {
     deck = TYPES.filter(t => activeCats.has(t.cat)).map(t => ({
@@ -1243,13 +1196,30 @@ function cls(cat) {
     return cat === 'Oberfläche' ? ' o' : cat === 'Zusammengesetzt' ? ' z' : cat === 'Sachaufgaben' ? ' s' : ''
 }
 
+function renderSketch(t) {
+    const box = document.getElementById('taskSketchBox');
+    const img = document.getElementById('taskSketch');
+    if (!box || !img) return;
+    if (t && t.sketch) {
+        img.src = t.sketch;
+        img.alt = 'Skizze zur Aufgabe: ' + (t.label || t.cat || 'Körper');
+        box.classList.remove('is-hidden');
+        box.setAttribute('aria-hidden', 'false');
+    } else {
+        img.removeAttribute('src');
+        img.alt = '';
+        box.classList.add('is-hidden');
+        box.setAttribute('aria-hidden', 'true');
+    }
+}
+
 function render() {
     if (!deck.length) {
         document.getElementById('qtext').textContent = 'Keine Karten in dieser Auswahl.';
         document.getElementById('given').innerHTML = '';
+        renderSketch(null);
         document.getElementById('sol').innerHTML = '';
         document.getElementById('cnt').textContent = '0 / 0';
-        setTaskSketch(null);
         resetAnswerBox();
         return;
     }
@@ -1258,8 +1228,8 @@ function render() {
     document.getElementById('pill').className = 'pill' + cls(t.cat);
     document.getElementById('pill').textContent = t.cat;
     document.getElementById('qtype').textContent = t.label;
-    setTaskSketch(t.sketch || null, t.label);
     document.getElementById('qtext').textContent = d.q;
+    renderSketch(t);
     let keys = Object.keys(d.given || {});
     let giv = document.getElementById('given');
     if (keys.length) {
@@ -1518,5 +1488,3 @@ document.addEventListener('keydown', function(e){
 <script src="tracker.js"></script>
 </body>
 </html>
-
-
